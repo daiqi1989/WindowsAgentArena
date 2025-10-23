@@ -10,7 +10,6 @@
     "json_name": "evaluation_examples_windows/test_all.json",
     "model_name": "gpt-4o",
     "som_origin": "oss",
-    "a11y_backend": "win32",
-    "_start_time": "2025-10-22 14:49:15"
+    "a11y_backend": "win32"
   }
 }
