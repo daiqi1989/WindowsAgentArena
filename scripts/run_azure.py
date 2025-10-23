@@ -128,7 +128,6 @@ def launch_vm_and_job(  worker_id,
 
             compute_instance = ComputeInstance(name=compute_instance_name, 
                                     size="Standard_D8_v3", 
-                                    location="westus2",
                                     setup_scripts=setup_scripts,
                                     idle_time_before_shutdown_minutes=600,
                                     ssh_public_access_enabled=True,
@@ -137,7 +136,6 @@ def launch_vm_and_job(  worker_id,
         else:
             compute_instance = ComputeInstance(name=compute_instance_name, 
                                     size="Standard_D8_v3", 
-                                    location="westus2",
                                     setup_scripts=setup_scripts,
                                     idle_time_before_shutdown_minutes=600,
                                     ssh_public_access_enabled=True
