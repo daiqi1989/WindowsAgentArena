@@ -17,6 +17,7 @@ from tqdm import tqdm
 import lib_run_single
 from desktop_env.envs.desktop_env import DesktopEnv
 from mm_agents.navi.agent import NaviAgent
+from mm_agents.PhiCUA.agent import PhiCUA
 import requests
 import time
 
@@ -95,7 +96,7 @@ def config() -> argparse.Namespace:
     parser.add_argument("--a11y_backend", type=str, default="uia") # "uia" or "win32"
 
     # agent config
-    parser.add_argument("--agent_name", type=str, default="navi")
+    parser.add_argument("--agent_name", type=str, default="phicua")
     parser.add_argument("--som_origin", type=str, default="oss") # options: 'oss', 'a11y', 'mixed-oss'
     parser.add_argument("--max_trajectory_length", type=int, default=3)
     parser.add_argument("--test_config_base_dir", type=str, default="evaluation_examples_windows")
@@ -185,6 +186,10 @@ def test(
             som_config=som_config,
             som_origin=args.som_origin,
             temperature=args.temperature
+        )
+    elif cfg_args["agent_name"] == "phicua":
+        agent = PhiCUA(
+            agent_url=f"http://20.64.120.194/predict"  # hard code a ip here
         )
     elif cfg_args["agent_name"] == "claude":
         from mm_agents.claude.agent import ClaudeAgent

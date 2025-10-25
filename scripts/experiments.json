@@ -1,7 +1,7 @@
 {
   "exposs1": {
     "ci_startup_script_path": "Users/sc-ah2064392/compute-instance-startup.sh",
-    "agent": "navi",
+    "agent": "phicua",
     "datastore_input_path": "storage",
     "docker_img_name": "waaws2cr.azurecr.io/winarena:latest",
     "exp_name": "exposs1",

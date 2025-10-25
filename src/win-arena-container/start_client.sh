@@ -1,6 +1,6 @@
 #!/bin/bash
 
-agent="navi"
+agent="phicua"
 model="gpt-4-vision-preview"
 som_origin="oss"
 a11y_backend="uia"
