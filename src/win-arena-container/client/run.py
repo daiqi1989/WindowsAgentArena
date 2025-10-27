@@ -189,7 +189,7 @@ def test(
         )
     elif cfg_args["agent_name"] == "phicua":
         agent = PhiCUA(
-            agent_url=f"http://20.64.120.194/predict"  # hard code a ip here
+            agent_url=f"http://20.64.120.194:8009/predict"  # hard code a ip here
         )
     elif cfg_args["agent_name"] == "claude":
         from mm_agents.claude.agent import ClaudeAgent

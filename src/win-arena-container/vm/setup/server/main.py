@@ -398,6 +398,15 @@ def obs_winagent():
         window_title = "Desktop"    
     else:    
         rect = win32gui.GetWindowRect(window)  # x0, y0, x1, y1 from the screen in global coordinates  
+    
+    rects = {}
+    def _enum(hwnd, _):  
+        if win32gui.IsWindowVisible(hwnd):  
+            title = win32gui.GetWindowText(hwnd)  
+            if title:   # 只收有标题的  
+                rects[title] = win32gui.GetWindowRect(hwnd)  
+    win32gui.EnumWindows(_enum, None)
+    
     image = ImageGrab.grab(rect)    
     window_manager = WindowManager()
     window_names = window_manager.find_open_applications()
@@ -407,7 +416,7 @@ def obs_winagent():
     else:
         computer_clipboard = None
     human_input = human.get_past_input()
-    return image, window_title, rect, window_names_str, computer_clipboard, human_input
+    return image, window_title, rects, window_names_str, computer_clipboard, human_input
     
 @app.route('/obs_winagent', methods=['GET'])
 def get_obs_winagent():

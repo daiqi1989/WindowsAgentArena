@@ -47,7 +47,13 @@ class PhiCUA:
         image_file = BytesIO(obs['screenshot'])
         view_image = Image.open(image_file).convert("RGB")
         window_title, window_names_str, window_rect, computer_clipboard = obs['window_title'], obs['window_names_str'], obs['window_rect'], obs['computer_clipboard']
-        
+        # print("@@@@@@@@@@@@@@", window_rect, len(window_rect))
+        to_pop = []
+        for k, v in window_rect.items():
+            if any([i<0 for i in v]) or k == 'Program Manager':
+                to_pop.append(k)
+        for k in to_pop:
+            window_rect.pop(k)
 
         # caling api
         buf = BytesIO()  
@@ -60,10 +66,14 @@ class PhiCUA:
         }
         data = {
             "instruction": instruction,
-            "response_id": self.response_id,
-            "accessibility_tree": obs['accessibility_tree'],
-            "clipboard_content": computer_clipboard
+            "response_id": self.response_id if self.response_id else "",
+            "accessibility_tree": obs['accessibility_tree'] if obs['accessibility_tree'] else "",
+            "window_rect": json.dumps(window_rect),
+            "clipboard_content": computer_clipboard if computer_clipboard else ""
         }
+
+        for k, v in data.items():
+            print(k, type(v))
 
 
         resp = requests.post(self.url, files=files, data=data)
