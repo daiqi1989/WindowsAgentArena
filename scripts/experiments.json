@@ -10,6 +10,7 @@
     "json_name": "evaluation_examples_windows/test_all.json",
     "model_name": "o4-mini",
     "som_origin": "oss",
-    "a11y_backend": "uia"
+    "a11y_backend": "uia",
+    "_start_time": "2025-10-29 17:33:41"
   }
 }
