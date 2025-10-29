@@ -1,18 +1,15 @@
 {
-  "phicuasys1c": {
+  "phicua1": {
     "ci_startup_script_path": "Users/t-miazhang/compute-instance-startup.sh",
     "agent": "phicua",
     "datastore_input_path": "storage",
     "docker_img_name": "waaws2cr.azurecr.io/winarena:latest",
-    "exp_name": "phicuasys1c",
-    "num_workers": 4,
+    "exp_name": "phicua1",
+    "num_workers": 16,
     "use_managed_identity": false,
     "json_name": "evaluation_examples_windows/test_all.json",
     "model_name": "o4-mini",
     "som_origin": "oss",
-    "a11y_backend": "uia",
-    "_start_time": "2025-10-28 00:41:35",
-    "_stop_time": "2025-10-28 10:52:23",
-    "_done": true
+    "a11y_backend": "uia"
   }
 }
