@@ -25,6 +25,8 @@ from azureml.core.environment import Environment, DockerSection
 from azureml.data.dataset_consumption_config import DatasetConsumptionConfig
 from azureml.data import OutputFileDatasetConfig
 
+# azureml-dataset-runtime
+
 # Create a directory for logs if it doesn't exist
 log_directory = "./azure_logs"
 os.makedirs(log_directory, exist_ok=True)
@@ -113,35 +115,41 @@ def launch_vm_and_job(  worker_id,
         # start the compute instance, if it doesn't exist
         logging.info(f"Creating compute instance {compute_instance_name}...")
 
-        if use_managed_identity:
-            identity_config = ManagedIdentityConfiguration(
-                client_id=azure_config['AZURE_MANAGED_IDENTITY_CLIENT_ID'],
-                resource_id="subscriptions/" + azure_config['AZURE_SUBSCRIPTION_ID'] + "/resourceGroups/" + azure_config['AZURE_ML_RESOURCE_GROUP'] + "/providers/Microsoft.ManagedIdentity/userAssignedIdentities/" + azure_config['AZURE_ML_USER_ASSIGNED_IDENTITY'],
-                object_id=azure_config['AZURE_MANAGED_IDENTITY_OBJECT_ID'],
-                principal_id=azure_config['AZURE_MANAGED_IDENTITY_PRINCIPAL_ID'],
-            )
+        for retry in range(5):
+            try:
+                if use_managed_identity:
+                    identity_config = ManagedIdentityConfiguration(
+                        client_id=azure_config['AZURE_MANAGED_IDENTITY_CLIENT_ID'],
+                        resource_id="subscriptions/" + azure_config['AZURE_SUBSCRIPTION_ID'] + "/resourceGroups/" + azure_config['AZURE_ML_RESOURCE_GROUP'] + "/providers/Microsoft.ManagedIdentity/userAssignedIdentities/" + azure_config['AZURE_ML_USER_ASSIGNED_IDENTITY'],
+                        object_id=azure_config['AZURE_MANAGED_IDENTITY_OBJECT_ID'],
+                        principal_id=azure_config['AZURE_MANAGED_IDENTITY_PRINCIPAL_ID'],
+                    )
 
-            identity = IdentityConfiguration(
-                type="UserAssigned",
-                user_assigned_identities=[identity_config]
-            )
+                    identity = IdentityConfiguration(
+                        type="UserAssigned",
+                        user_assigned_identities=[identity_config]
+                    )
 
-            compute_instance = ComputeInstance(name=compute_instance_name, 
-                                    size="Standard_D8_v3", 
-                                    setup_scripts=setup_scripts,
-                                    idle_time_before_shutdown_minutes=600,
-                                    ssh_public_access_enabled=True,
-                                    identity=identity
-                                    )
-        else:
-            compute_instance = ComputeInstance(name=compute_instance_name, 
-                                    size="Standard_D8_v3", 
-                                    setup_scripts=setup_scripts,
-                                    idle_time_before_shutdown_minutes=600,
-                                    ssh_public_access_enabled=True
-                                    )
-        ml_client.begin_create_or_update(compute_instance).result()
-        logging.info(f"Compute instance {compute_instance_name} created")
+                    compute_instance = ComputeInstance(name=compute_instance_name, 
+                                            size="Standard_D8_v3", 
+                                            setup_scripts=setup_scripts,
+                                            idle_time_before_shutdown_minutes=600,
+                                            ssh_public_access_enabled=True,
+                                            identity=identity
+                                            )
+                else:
+                    compute_instance = ComputeInstance(name=compute_instance_name, 
+                                            size="Standard_D8_v3", 
+                                            setup_scripts=setup_scripts,
+                                            idle_time_before_shutdown_minutes=600,
+                                            ssh_public_access_enabled=True
+                                            )
+                ml_client.begin_create_or_update(compute_instance).result()
+                logging.info(f"Compute instance {compute_instance_name} created")
+
+                break
+            except:
+                logging.info(f"Compute instance {compute_instance_name} create failed, retry - {retry}")
 
     # start the job
     logging.info(f"Starting job on compute instance {compute_instance_name}...")

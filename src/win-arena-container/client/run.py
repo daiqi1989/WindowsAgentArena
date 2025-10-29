@@ -188,8 +188,11 @@ def test(
             temperature=args.temperature
         )
     elif cfg_args["agent_name"] == "phicua":
+        api_list = [f"20.64.120.194:{port}" for port in range(8001, 8009)]
+        assert args.worker_id*2 < len(api_list), "only support one api for 2 workers, otherwise meaningless"
+        api = api_list[args.worker_id % len(api_list)]
         agent = PhiCUA(
-            agent_url=f"http://20.64.120.194:8009/predict"  # hard code a ip here
+            agent_url=f"http://{api}/predict"  # hard code a ip here
         )
     elif cfg_args["agent_name"] == "claude":
         from mm_agents.claude.agent import ClaudeAgent

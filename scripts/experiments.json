@@ -1,15 +1,18 @@
 {
-  "exposs1": {
-    "ci_startup_script_path": "Users/sc-ah2064392/compute-instance-startup.sh",
+  "phicuasys1c": {
+    "ci_startup_script_path": "Users/t-miazhang/compute-instance-startup.sh",
     "agent": "phicua",
     "datastore_input_path": "storage",
     "docker_img_name": "waaws2cr.azurecr.io/winarena:latest",
-    "exp_name": "exposs1",
+    "exp_name": "phicuasys1c",
     "num_workers": 4,
     "use_managed_identity": false,
     "json_name": "evaluation_examples_windows/test_all.json",
-    "model_name": "gpt-4o",
+    "model_name": "o4-mini",
     "som_origin": "oss",
-    "a11y_backend": "win32"
+    "a11y_backend": "uia",
+    "_start_time": "2025-10-28 00:41:35",
+    "_stop_time": "2025-10-28 10:52:23",
+    "_done": true
   }
 }
