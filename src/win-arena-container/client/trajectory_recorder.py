@@ -154,7 +154,8 @@ class TrajectoryRecorder:
             html += self.dict_to_html({
                 **logs_saved_content,
                 'user_question': logs.get('user_question'),
-                'plan_result': logs.get('plan_result')
+                'plan_result': logs.get('plan_result'),
+                'tool_call_info': logs.get('tool_call', ''),
             }, "agent.predict(obs)")
             html.append(f"<pre>\n{html_lib.escape(action)}\n</pre>")
             html += self.dict_to_html(obs_saved_content, "env.step(action)")

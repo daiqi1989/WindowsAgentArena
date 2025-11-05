@@ -46,7 +46,7 @@ class PhiCUA:
         # processing observation
         image_file = BytesIO(obs['screenshot'])
         view_image = Image.open(image_file).convert("RGB")
-        window_title, window_names_str, window_rect, computer_clipboard = obs['window_title'], obs['window_names_str'], obs['window_rect'], obs['computer_clipboard']
+        window_rect, computer_clipboard, accessibility_tree = obs.get('window_rect', dict()), obs.get('computer_clipboard', ""), obs.get('accessibility_tree', "")
         # print("@@@@@@@@@@@@@@", window_rect, len(window_rect))
         to_pop = []
         for k, v in window_rect.items():
@@ -56,45 +56,43 @@ class PhiCUA:
             window_rect.pop(k)
 
         # caling api
-        buf = BytesIO()  
-        view_image.save(buf, format="JPEG", quality=90)
-        buf.seek(0)
+        try:
+            buf = BytesIO()  
+            view_image.save(buf, format="JPEG", quality=90)
+            buf.seek(0)
 
-        files = {  
-            # key 名称要和 FastAPI 接口的 parameter 一致  
-            "screenshot": ("processed.jpg", buf, "image/jpeg")  
-        }
+            files = {  
+                # key 名称要和 FastAPI 接口的 parameter 一致  
+                "screenshot": ("processed.jpg", buf, "image/jpeg")  
+            }
+            js_str = json.dumps(window_rect)
+        except Exception as e:
+            print("Error at data processing: ", e)
+            return "", ["WAIT"], logs, None
+
         data = {
             "instruction": instruction,
             "response_id": self.response_id if self.response_id else "",
-            "accessibility_tree": obs['accessibility_tree'] if obs['accessibility_tree'] else "",
-            "window_rect": json.dumps(window_rect),
+            "accessibility_tree": accessibility_tree if accessibility_tree else "",
+            "window_rect": js_str,
             "clipboard_content": computer_clipboard if computer_clipboard else ""
         }
 
-        for k, v in data.items():
-            print(k, type(v))
-
-
-        resp = requests.post(self.url, files=files, data=data)
-        res_json = resp.json()
-        # for debug
-#         import random
-#         x = random.randint(100, 500)
-#         y = random.randint(100, 500)
-#         res_json = {
-#             "plan_result": f"""
-# ```python
-# pyautogui.click(x={x}, y={y})
-# ```
-# ```decision
-# COMMAND
-# ```
-# """,
-#             "response_id": "aaa"}
+        res_json = None
+        for r in range(3):  # retry
+            try:
+                resp = requests.post(self.url, files=files, data=data)
+                res_json = resp.json()
+                break
+            except Exception as e:
+                print("Error at calling api: ", e)
+                continue
+        
+        if res_json is None:
+            return "", ["WAIT"], logs, None
 
         # --------------------------------------------------
-
+        
         plan_result = res_json["plan_result"]
         response_id = res_json["response_id"]
 
@@ -106,6 +104,7 @@ class PhiCUA:
 
             
         logs['plan_result'] = plan_result
+        logs['tool_call'] = res_json.get('tool_call', '')
 
         code_block = re.search(r'```python\n(.*?)```', plan_result, re.DOTALL)
         if code_block:

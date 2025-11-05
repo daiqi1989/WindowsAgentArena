@@ -92,7 +92,7 @@ def config() -> argparse.Namespace:
     parser.add_argument("--screen_width", type=int, default=1920)
     parser.add_argument("--screen_height", type=int, default=1200)
     parser.add_argument("--sleep_after_execution", type=float, default=3)
-    parser.add_argument("--max_steps", type=int, default=15)
+    parser.add_argument("--max_steps", type=int, default=49)
     parser.add_argument("--a11y_backend", type=str, default="uia") # "uia" or "win32"
 
     # agent config
@@ -188,7 +188,9 @@ def test(
             temperature=args.temperature
         )
     elif cfg_args["agent_name"] == "phicua":
-        api_list = [f"20.64.120.194:{port}" for port in range(8001, 8009)]
+        api_list = [f"20.64.120.194:{port}" for port in range(8001, 8005)] \
+                        + [f"4.242.7.240:{port}" for port in range(8001, 8005)]
+        # api_list = [f"4.242.7.240:{port}" for port in range(8001, 8005)] # debug
         assert args.worker_id < len(api_list)*2, "only support one api for 2 workers, otherwise meaningless"
         api = api_list[args.worker_id % len(api_list)]
         agent = PhiCUA(
