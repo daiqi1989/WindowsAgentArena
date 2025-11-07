@@ -120,7 +120,7 @@ def launch_vm_and_job(  worker_id,
                 if use_managed_identity:
                     identity_config = ManagedIdentityConfiguration(
                         client_id=azure_config['AZURE_MANAGED_IDENTITY_CLIENT_ID'],
-                        resource_id="subscriptions/" + azure_config['AZURE_SUBSCRIPTION_ID'] + "/resourceGroups/" + azure_config['AZURE_ML_RESOURCE_GROUP'] + "/providers/Microsoft.ManagedIdentity/userAssignedIdentities/" + azure_config['AZURE_ML_USER_ASSIGNED_IDENTITY'],
+                        resource_id="subscriptions/" + azure_config['AZURE_SUBSCRIPTION_ID'] + "/resourceGroups/" + azure_config['AZURE_MANAGED_IDENTITY_RESOURCE_GROUP'] + "/providers/Microsoft.ManagedIdentity/userAssignedIdentities/" + azure_config['AZURE_ML_USER_ASSIGNED_IDENTITY'],
                         object_id=azure_config['AZURE_MANAGED_IDENTITY_OBJECT_ID'],
                         principal_id=azure_config['AZURE_MANAGED_IDENTITY_PRINCIPAL_ID'],
                     )
